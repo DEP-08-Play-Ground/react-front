@@ -12,7 +12,27 @@ export default class App extends React.Component<any, { notes: Array<NoteDTO> }>
     constructor(props: any, context: any) {
         super(props, context);
         this.state = {notes: []};
-        this.addNote=this.addNote.bind(this);
+        this.addNote = this.addNote.bind(this);
+        this.deleteNote = this.deleteNote.bind(this);
+    }
+
+    async deleteNote(note: NoteDTO) {
+        const response = await fetch(`http://localhost:8080/notes/api/v1/users/${USER_ID}/notes/${note.id}`,
+            {
+                method: 'DELETE'
+            });
+        if (response.status === 204) {
+            // const elementToBeRemoved=this.state.notes.indexOf(note);
+            // this.state.notes.splice(elementToBeRemoved,1);
+            // this.forceUpdate();
+            const newArray = this.state.notes.filter(value => value !== note);
+            this.setState({
+                // notes: this.state.notes
+                notes:newArray
+            });
+
+        }
+
     }
 
     async addNote(text: string) {
@@ -24,8 +44,8 @@ export default class App extends React.Component<any, { notes: Array<NoteDTO> }>
             },
             body: JSON.stringify(new NoteDTO(null, text, USER_ID))
         });
-        if (response.status === 201){
-            const newlyAddedNote= await response.json();
+        if (response.status === 201) {
+            const newlyAddedNote = await response.json();
             this.setState({
                 notes: [newlyAddedNote, ...this.state.notes]
             });
@@ -51,7 +71,7 @@ export default class App extends React.Component<any, { notes: Array<NoteDTO> }>
                 </header>
 
                 <Input onAdd={this.addNote}/>
-                {this.state.notes.map(note => <Note key={note.id} note={note}/>)}
+                {this.state.notes.map(note => <Note key={note.id} note={note} onDelete={this.deleteNote}/>)}
             </>
         )
     }

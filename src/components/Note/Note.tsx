@@ -3,10 +3,12 @@ import React from "react";
 import trash from '../../assets/trash-bin.png';
 import {Note as NoteDTO} from "../../dto/Note";
 
-export default function Note({note}: { note:NoteDTO }){
+export default function Note({note,onDelete}: { note:NoteDTO,onDelete:(note:NoteDTO)=>void}){
+
     function deleteNote(){
-        console.log("Note Deleted")
+        onDelete(note);
     }
+
     return (
         <div className="Note d-flex justify-content-between p-3">
             <h1>Note {note.text}</h1>
